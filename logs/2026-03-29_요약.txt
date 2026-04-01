@@ -1,0 +1,4 @@
+2026-03-29 요약
+2026년 3월 29일의 로그 파일은 주로 'no-active-window'와 'powershell-spawn-error' 관련 로그가 반복적으로 기록되어 있습니다. 또한 Visual Studio Code, Google Chrome, Obsidian, Electron 등의 애플리케이션 사용 기록이 있습니다. 
+중요한 항목으로는 powershell-spawn-error와 winapi-error 관련 오류 메시지가 반복적으로 나타납니다. 
+한줄 요약: 2026년 3월 29일의 로그 파일은 다양한 애플리케이션 사용 기록과 오류 메시지를 포함하고 있습니다.

@@ -1,0 +1,88 @@
+{
+    "name": "next-workspace",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Desktop activity tracker for logging the active window title and app name.",
+    "author": "rarak",
+    "main": "index.js",
+    "productName": "Window Log Tracker",
+    "scripts": {
+        "dev": "node scripts/dev-with-tracker.js",
+        "dev:next": "next dev",
+        "desktop": "cmd /c \"set ELECTRON_RUN_AS_NODE=&& electron . --user-data-dir=%TEMP%\\\\WindowLogTrackerDev --no-sandbox\"",
+        "pack:win": "electron-builder --win --dir",
+        "dist:win": "electron-builder --win nsis",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint",
+        "db:generate": "prisma generate",
+        "db:push": "prisma db push",
+        "track": "node tracker.js"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.6.0",
+        "next": "16.2.1",
+        "react": "19.2.4",
+        "react-dom": "19.2.4"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "electron": "^41.1.0",
+        "electron-builder": "^26.8.1",
+        "eslint": "^9",
+        "eslint-config-next": "16.2.1",
+        "prisma": "^6.6.0",
+        "tailwindcss": "^4",
+        "typescript": "^5"
+    },
+    "build": {
+        "appId": "com.rarak.activitytracker",
+        "productName": "Window Log Tracker",
+        "asar": true,
+        "compression": "maximum",
+        "artifactName": "Window-Log-Tracker-Setup-${version}.${ext}",
+        "directories": {
+            "output": "dist"
+        },
+        "electronLanguages": [
+            "en-US",
+            "ko"
+        ],
+        "files": [
+            ".env",
+            "desktop/**/*",
+            "lib/**/*",
+            "index.js",
+            "tracker.js",
+            "package.json",
+            "app/favicon.ico"
+        ],
+        "win": {
+            "icon": "app/favicon.ico",
+            "executableName": "Window Log Tracker",
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
+        },
+        "extraResources": [
+            {
+                "from": ".env",
+                "to": ".env"
+            }
+        ]
+    }
+}

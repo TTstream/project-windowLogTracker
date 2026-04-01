@@ -1,0 +1,441 @@
+﻿<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity Tracker</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --panel: rgba(18, 26, 34, 0.92);
+        --panel-strong: #18212b;
+        --line: rgba(180, 206, 226, 0.14);
+        --text: #eff5fb;
+        --muted: #9eb0c1;
+        --accent: #64d2ff;
+        --danger: #ff6b6b;
+        --success: #2ecc71;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(100, 210, 255, 0.16), transparent 34%),
+          radial-gradient(circle at bottom right, rgba(31, 167, 214, 0.14), transparent 30%),
+          linear-gradient(160deg, #0c1014 0%, #151d26 52%, #0d1319 100%);
+      }
+
+      .shell {
+        padding: 28px;
+      }
+
+      .window {
+        max-width: 1120px;
+        margin: 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        backdrop-filter: blur(18px);
+      }
+
+      .titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .traffic {
+        display: flex;
+        gap: 8px;
+      }
+
+      .traffic span {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+      }
+
+      .traffic span:nth-child(1) { background: #ff5f57; }
+      .traffic span:nth-child(2) { background: #febc2e; }
+      .traffic span:nth-child(3) { background: #28c840; }
+
+      .titlebar h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .titlebar p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+      }
+
+      .sidebar,
+      .main {
+        padding: 24px;
+      }
+
+      .sidebar {
+        border-right: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .panel {
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: var(--panel-strong);
+      }
+
+      .panel + .panel {
+        margin-top: 18px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .status-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 96px;
+        height: 34px;
+        padding: 0 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .badge[data-state="running"] {
+        color: #072615;
+        background: var(--success);
+      }
+
+      .badge[data-state="stopped"] {
+        color: white;
+        background: rgba(255, 107, 107, 0.82);
+      }
+
+      .status-copy {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .notice {
+        min-height: 44px;
+        margin-bottom: 14px;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+        line-height: 1.45;
+      }
+
+      .notice[data-tone="success"] {
+        border-color: rgba(46, 204, 113, 0.36);
+        background: rgba(46, 204, 113, 0.14);
+      }
+
+      .notice[data-tone="warning"] {
+        border-color: rgba(255, 107, 107, 0.36);
+        background: rgba(255, 107, 107, 0.12);
+      }
+
+      .input-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .input-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      input {
+        width: 100%;
+        height: 48px;
+        padding: 0 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 16px;
+      }
+
+      .path-box {
+        margin-bottom: 12px;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 13px;
+        line-height: 1.5;
+        word-break: break-all;
+      }
+
+      button {
+        height: 46px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 140ms ease, opacity 140ms ease, background 140ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+        transform: none;
+      }
+
+      .primary {
+        color: #03202d;
+        background: linear-gradient(135deg, var(--accent), #96e4ff);
+      }
+
+      .ghost {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .danger {
+        color: white;
+        background: rgba(255, 107, 107, 0.22);
+      }
+
+      .button-group {
+        display: grid;
+        gap: 10px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .stat {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .stat h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .stat p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      .log-card {
+        margin-top: 18px;
+      }
+
+      .log-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .log-header h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .log-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .log-line {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        color: #d5e2ed;
+        background: rgba(255, 255, 255, 0.03);
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .is-empty {
+        color: var(--muted);
+        text-align: center;
+      }
+
+      @media (max-width: 920px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .stat-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="window">
+        <header class="titlebar">
+          <div>
+            <h1>Activity Tracker Desktop</h1>
+            <p>활성 창 제목과 앱 이름을 로그 파일로 저장합니다.</p>
+          </div>
+          <div class="traffic" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </header>
+
+        <div class="content">
+          <aside class="sidebar">
+            <section class="panel">
+              <p class="eyebrow">Tracker Status</p>
+              <div class="status-row">
+                <span class="badge" data-role="status-badge" data-state="stopped">STOPPED</span>
+                <p class="status-copy" data-role="status-text">수집이 멈춰 있습니다</p>
+              </div>
+
+              <div class="notice" data-role="status-notice" data-tone="neutral"></div>
+
+              <label class="input-label" for="interval-seconds">몇 초마다 로그 수집할지</label>
+              <div class="input-row">
+                <input id="interval-seconds" data-role="interval-input" type="number" min="1" max="3600" step="1" value="5" />
+              </div>
+
+              <label class="input-label">로그 저장 폴더</label>
+              <div class="path-box" data-role="log-dir">-</div>
+
+              <div class="button-group">
+                <button class="primary" data-role="start-button">시작 / 주기 적용</button>
+                <button class="ghost" data-role="choose-dir-button">저장 위치 선택</button>
+                <button class="danger" data-role="stop-button">정지</button>
+                <button class="ghost" data-role="refresh-button">상태 새로고침</button>
+                <button class="ghost" data-role="open-dir-button">로그 폴더 열기</button>
+                <button class="ghost" data-role="open-summary-button">메모장 요약</button>
+                <button class="ghost" data-role="open-file-summary-button">파일 선택 요약</button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <p class="eyebrow">Today</p>
+              <p class="status-copy">
+                수집 중일 때는 같은 설정으로 시작 버튼을 다시 눌러도 중복 시작하지 않고 안내만 보여줍니다.
+              </p>
+            </section>
+          </aside>
+
+          <main class="main">
+            <section class="stat-grid">
+              <article class="stat">
+                <h3>마지막 앱</h3>
+                <p data-role="app-name">-</p>
+              </article>
+              <article class="stat">
+                <h3>마지막 수집 시각</h3>
+                <p data-role="last-time">-</p>
+              </article>
+              <article class="stat">
+                <h3>창 제목</h3>
+                <p data-role="window-title">-</p>
+              </article>
+              <article class="stat">
+                <h3>수집 소스</h3>
+                <p data-role="capture-source">-</p>
+              </article>
+              <article class="stat">
+                <h3>로그 파일 경로</h3>
+                <p data-role="log-path">-</p>
+              </article>
+              <article class="stat">
+                <h3>마지막 오류</h3>
+                <p data-role="error">-</p>
+              </article>
+            </section>
+
+            <section class="panel log-card">
+              <div class="log-header">
+                <h2>최근 로그</h2>
+              </div>
+              <ul class="log-list" data-role="recent-lines"></ul>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>

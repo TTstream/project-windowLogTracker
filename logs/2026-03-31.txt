@@ -1,0 +1,8 @@
+[2026-03-31 00:09:35 KST] app="electron" title="Activity Tracker"
+[2026-03-31 00:09:40 KST] app="electron" title="Activity Tracker"
+[2026-03-31 00:11:55 KST] app="electron" title="Activity Tracker"
+[2026-03-31 00:19:09 KST] app="electron" title="Activity Tracker"
+[2026-03-31 00:19:14 KST] app="electron" title="Activity Tracker"
+[2026-03-31 00:35:04 KST] app="Window Log Tracker" title="Activity Tracker"
+[2026-03-31 00:35:09 KST] app="Window Log Tracker" title="Activity Tracker"
+[2026-03-31 00:35:51 KST] app="electron" title="Activity Tracker"

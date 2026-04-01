@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ActivityLog {
+  id              Int      @id @default(autoincrement())
+  appName         String
+  windowTitle     String
+  startTime       DateTime
+  endTime         DateTime
+  durationSeconds Int
+  createdAt       DateTime @default(now())
+}

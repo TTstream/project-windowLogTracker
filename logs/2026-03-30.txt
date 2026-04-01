@@ -1,0 +1,2 @@
+[2026-03-30 23:54:02 KST] app="Code" title="tracker.js - next-workspace - Visual Studio Code"
+[2026-03-30 23:54:07 KST] app="Code" title="tracker.js - next-workspace - Visual Studio Code"
